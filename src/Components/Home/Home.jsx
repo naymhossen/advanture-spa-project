@@ -5,6 +5,8 @@ import Cart from "../Cart/Cart";
 const Home = () => {
   const [allActors, setAllActor] = useState([]);
   const [selectActors, setSelectActors] = useState([]);
+  const [cost, setCost] = useState(0);
+  const [remaining, setRemaining] = useState(0);
 
   useEffect(() => {
     fetch(
@@ -16,13 +18,25 @@ const Home = () => {
 
   const handaleSelectActor = (actor) => {
     const isPurcheed = selectActors.find((person) => person.id == actor.id);
-    if(isPurcheed){
-      alert("Alrady Booking it's Actor");
-    }else{
+
+    let count = actor.salary;
+
+    if (isPurcheed) {
+      return alert("Alrady Booking it's Actor");
+    } else {
+      selectActors.forEach((money) => {
+        count = count + money.salary;
+      });
+      const totalRemaining = 20000 - count;
+      
+      if(count > 20000){
+        return alert("Limited Budget")
+      }
+      setCost(count);
+      setRemaining(totalRemaining);
       setSelectActors([...selectActors, actor]);
     }
   };
-  // console.log(selectActors);
 
   return (
     <>
@@ -51,7 +65,7 @@ const Home = () => {
                   <div className="card-actions">
                     <button
                       onClick={() => handaleSelectActor(actor)}
-                      className="btn btn-primary animate-bounce"
+                      className="btn btn-primary animate-pulse"
                     >
                       Contact Me
                     </button>
@@ -64,7 +78,7 @@ const Home = () => {
           {/* 2nd section */}
 
           <div className="w-1/3 ml-4 text-center pt-5">
-            <Cart selectActors={selectActors}></Cart>
+            <Cart selectActors={selectActors} cost={cost} remaining={remaining}></Cart>
           </div>
         </div>
       </div>
